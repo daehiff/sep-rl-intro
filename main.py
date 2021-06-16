@@ -1,13 +1,15 @@
-from pprint import pprint
-from time import sleep
-
-import gym
 import numpy as np
-
-from frozen_lake import FrozenLakeEnvGui
 
 
 def choose_action(env, Q, observation, epsilon):
+    """
+    Chose a action either random or based on Q-Values
+    :param env:
+    :param Q:
+    :param observation:
+    :param epsilon:
+    :return:
+    """
     if np.random.uniform(0, 1) < epsilon:
         action = env.action_space.sample()
     else:
@@ -16,6 +18,17 @@ def choose_action(env, Q, observation, epsilon):
 
 
 def q_learning(env, episodes=500, epsilon=0.9, epsilon_decay=0.95, min_epsilon=0.01, gamma=0.95, lr=0.81):
+    """
+    Q-Learning implementation
+    :param env: the openAI gym enviroment
+    :param episodes: how many episodes of training
+    :param epsilon: pr of random moves
+    :param epsilon_decay: pr decay of random moves
+    :param min_epsilon: min pr of random moves
+    :param gamma: look ahead of algorithm
+    :param lr: learning rate
+    :return: Q, pi policy and corresponding Q-Values
+    """
     Q = np.zeros((env.observation_space.n, env.action_space.n))
 
     for ep in range(episodes):
@@ -43,6 +56,13 @@ def q_learning(env, episodes=500, epsilon=0.9, epsilon_decay=0.95, min_epsilon=0
 
 
 def value_iteration(env, gamma=0.95, omega=0.1):
+    """
+    Value iteration implementation
+    :param env: openAI gym env (in this case frozen-lake GUI)
+    :param gamma: look a head value
+    :param omega: determine when V-Values are fine enough
+    :return: V, pi, V-Values and optimal policy
+    """
     V = [0.0 for _ in range(env.nS)]
     ep = 0.0
     while True:
@@ -71,6 +91,14 @@ def value_iteration(env, gamma=0.95, omega=0.1):
 
 
 def convert_value_to_policy(env, V, obs, gamma):
+    """
+    Determine the policy from the V-Values
+    :param env:
+    :param V:
+    :param obs:
+    :param gamma:
+    :return:
+    """
     adjacent_states = env.P[obs]
     action_values = []
     for movement, state in adjacent_states.items():
@@ -79,12 +107,3 @@ def convert_value_to_policy(env, V, obs, gamma):
             action_value += prob * (reward + gamma * V[next_state])
         action_values.append(action_value)
     return np.argmax(action_values)
-
-
-def main(render=True):
-    env = FrozenLakeEnvGui()
-    V = value_iteration(env)
-
-
-if __name__ == '__main__':
-    main()

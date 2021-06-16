@@ -163,3 +163,10 @@ class FrozenLakeEnvGui(FrozenLakeEnv):
 
             if not self.learn_pause:  # cries in python
                 break
+
+    def reset_gui(self):
+        obs = self.reset()
+        self.learn_pause = True
+        self.fast_forward = False
+        self.print_policy = True
+        return obs

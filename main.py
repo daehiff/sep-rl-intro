@@ -36,7 +36,10 @@ def q_learning(env, episodes=500, epsilon=0.9, epsilon_decay=0.95, min_epsilon=0
         if ep % 100 == 0:
             epsilon *= epsilon_decay
             epsilon = max(epsilon, min_epsilon)
-    return Q
+    pi = np.zeros((env.nS))
+    for state in range(env.nS):
+        pi[state] = np.argmax(Q[state])
+    return Q, pi
 
 
 def value_iteration(env, gamma=0.95, omega=0.1):
@@ -80,9 +83,7 @@ def convert_value_to_policy(env, V, obs, gamma):
 
 def main(render=True):
     env = FrozenLakeEnvGui()
-    Q = q_learning(env)
-    # env.reset()
-    # V = value_iteration(env)
+    V = value_iteration(env)
 
 
 if __name__ == '__main__':
